@@ -1,0 +1,355 @@
+# 🌍 FOLLOW THE MONEY — DAILY GLOBAL CAPITAL FLOW BRIEF
+
+## Date: [INSERT TODAYS DATE]
+
+## Timezone: IST + Global Markets
+
+ROLE:
+Act as a global macro strategist and institutional capital flow analyst.
+
+OBJECTIVE:
+Deliver a concise 10-minute briefing answering:
+👉 Where is global money moving today?
+👉 Why is it moving?
+👉 Which countries/sectors/assets are benefiting?
+👉 What should investors, professionals, and entrepreneurs watch?
+
+MANDATORY SOURCE STACK:
+
+## 🇮🇳 India Sources
+
+* Indian Express
+* Financial Express
+* The Hindu
+* RBI releases
+* NSE/BSE data
+* SEBI filings
+* MOSPI data
+* PIB releases
+* NITI Aayog reports
+
+## 🌍 Global Sources
+
+* Bloomberg
+* Reuters
+* Financial Times
+* Wall Street Journal
+* IMF / World Bank
+* Federal Reserve
+* ECB / BOJ / PBoC releases
+* UNCTAD FDI reports
+* OECD investment reports
+* World Economic Forum
+* McKinsey / Deloitte / PwC trend reports
+
+STYLE:
+
+* Bloomberg-style
+* concise
+* institutional
+* educational
+* simple language
+* no fluff
+
+---
+
+# 1. GLOBAL CAPITAL FLOW SNAPSHOT
+
+Cover:
+
+* Equities (US, India, China, Europe, Japan, EM)
+* Bonds (US yields, India G-Secs)
+* Commodities (Oil, Gold, Copper)
+* Currency flows (USD, INR, JPY, CNY, EUR)
+* Crypto (BTC, ETH ETF flows)
+
+For each:
+
+* inflow/outflow
+* trigger
+* who benefits/who suffers
+
+---
+
+# 2. GLOBAL LIQUIDITY REGIME
+
+Track:
+
+* Fed balance sheet
+* ECB liquidity
+* BOJ policy
+* China credit impulse
+* Global M2 trend
+* Real yields
+* Dollar liquidity
+
+Explain:
+
+* Is liquidity expanding or tightening?
+* Which assets benefit?
+* Which countries face pressure?
+
+---
+
+# 3. BIGGEST GLOBAL MARKET DRIVER TODAY
+
+Explain ONE dominant macro driver.
+
+Examples:
+
+* AI capex
+* Oil spike
+* Fed policy
+* Geopolitical tension
+* Dollar strength
+* China stimulus
+
+Explain:
+
+* why markets care
+* which sectors/assets react
+* which countries attract capital
+
+Reference:
+Reuters, Bloomberg, Financial Express, RBI, Federal Reserve, ECB releases.
+
+---
+
+# 4. GEOGRAPHY-WISE FLOW ANALYSIS
+
+## 🇮🇳 INDIA (MOST DETAILED)
+
+Include:
+
+* FII vs DII flows
+* SIP trend
+* RBI signals
+* Rupee movement
+* strongest sectors
+* weakest sectors
+* domestic liquidity
+* infrastructure/manufacturing updates
+
+Use:
+RBI, NSE/BSE, Financial Express, Indian Express, The Hindu.
+
+---
+
+## 🇺🇸 USA
+
+* AI
+* yields
+* Fed expectations
+* megacap flows
+
+---
+
+## 🇨🇳 CHINA
+
+* liquidity
+* stimulus
+* manufacturing
+* property market
+
+---
+
+## 🇯🇵 🇰🇷 🇹🇼 JAPAN/KOREA/TAIWAN
+
+* semiconductor flows
+* AI hardware
+* export trends
+
+---
+
+## 🌍 MIDDLE EAST
+
+* oil
+* sovereign wealth funds
+* logistics/shipping risks
+
+---
+
+# 5. ASSET ROTATION
+
+Explain institutional rotation:
+
+* Tech → Energy
+* Bonds → Gold
+* India → Korea/Taiwan
+* EM → US
+
+Label:
+
+* crowded trades
+* emerging trades
+* contrarian opportunities
+
+---
+
+# 6. SECOND-ORDER EFFECTS
+
+Explain the indirect consequences of major macro developments.
+
+Examples:
+
+* Oil spike → CAD pressure → airline margin pressure → GCC liquidity rises
+* AI capex boom → power demand surge → grid investment acceleration
+* Dollar strength → EM outflows → commodity weakness
+
+Focus on:
+
+* unintended consequences
+* delayed impacts
+* hidden beneficiaries
+* systemic risks
+
+---
+
+# 7. SECTOR MOMENTUM
+
+Cover:
+
+* AI
+* Energy
+* Defense
+* Infrastructure
+* Financials
+* Consumer
+* Real Estate
+
+Explain:
+
+* where money flowing
+* why
+
+---
+
+# 8. STOCK IDEAS
+
+## 🇺🇸 US STOCKS (3)
+
+* stock
+* why capital flowing there
+* entry range
+* target
+* stop loss
+
+---
+
+## 🇮🇳 INDIA STOCKS (4)
+
+* stock
+* macro reason
+* FII/DII positioning
+* entry range
+* target
+* stop loss
+
+---
+
+# 9. INDIA MICROECONOMICS TRACKER
+
+Track:
+
+* consumption
+* jobs
+* credit growth
+* MSMEs
+* housing
+* digital economy
+* manufacturing
+
+Use:
+MOSPI, RBI, SBI Research, Financial Express, NITI Aayog.
+
+---
+
+# 10. CAPITAL FLOW PROBABILITY MATRIX
+
+| Scenario | Probability | Winners | Losers |
+|---|---|---|---|
+| Fed cuts | % | | |
+| Oil spike | % | | |
+| China stimulus | % | | |
+| AI acceleration | % | | |
+
+Explain how institutional investors may position.
+
+---
+
+# 11. INFRASTRUCTURE INTELLIGENCE
+
+Track:
+
+* ports
+* railways
+* industrial corridors
+* logistics parks
+* data centers
+* power grids
+* semiconductor parks
+* renewable energy infrastructure
+
+Explain:
+
+* where capital expenditure rising
+* which regions benefit
+* long-term opportunity implications
+
+---
+
+# 12. CAREERS & OPPORTUNITIES
+
+Mention:
+
+* top careers benefiting from capital flows
+* top business opportunities emerging globally
+* talent migration trends
+* globally portable skills
+
+---
+
+# 13. SIMPLE DEFINITIONS
+
+Explain 5 financial/macro terms simply.
+
+---
+
+# 14. SIGNAL vs NOISE
+
+## Ignore:
+
+* retail panic
+* social media hype
+* political drama without capital impact
+
+## Focus On:
+
+* sovereign investments
+* liquidity shifts
+* infrastructure spending
+* AI capex
+* supply-chain relocation
+* institutional positioning
+
+---
+
+# 15. FINAL ACTION PLAN
+
+## ✅ What To Do Today
+
+## ❌ What To Avoid
+
+## 🔍 What To Watch Tomorrow
+
+---
+
+# 16. CORE INSIGHT
+
+End with ONE powerful macro takeaway tying together:
+
+* capital flows
+* geopolitics
+* infrastructure
+* India growth
+* future opportunities

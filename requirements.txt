@@ -1,0 +1,10 @@
+openai
+python-dotenv
+requests
+feedparser
+beautifulsoup4
+pandas
+markdown
+weasyprint
+python-telegram-bot
+notion-client
