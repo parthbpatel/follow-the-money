@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import sys
+import time
 
 from dotenv import load_dotenv
 
@@ -28,6 +29,7 @@ def build_context():
 
 def run(report_type="daily"):
 
+    started_at = time.time()
     log.info("Starting report generation for type=%s", report_type)
     prompt = load_prompt(report_type)
 
@@ -39,7 +41,8 @@ def run(report_type="daily"):
     log.info("Report generation finished successfully.")
 
     saved_path = save_report(report_type, report)
-    log.info("Report saved to %s", saved_path)
+    elapsed_seconds = time.time() - started_at
+    log.info("Report saved to %s in %.2f seconds", saved_path, elapsed_seconds)
     print(f"\nReport saved to: {saved_path}\n")
     print(report)
 
