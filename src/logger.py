@@ -1,0 +1,10 @@
+import logging
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(levelname)s] %(message)s",
+)
+
+
+log = logging.getLogger("follow_the_money")
