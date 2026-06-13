@@ -18,7 +18,7 @@ class ReportGeneratorTest(unittest.TestCase):
     def test_generate_uses_ollama_when_enabled(self, mock_client, _mock_getenv):
         fake_client = mock_client.return_value
         fake_client.generate.return_value = {
-            "response": "1. GLOBAL CAPITAL FLOW SNAPSHOT\n\n16. CORE INSIGHT"
+            "response": "1. GLOBAL CAPITAL FLOW SNAPSHOT\n\n16. CORE INSIGHT\n\nDate: 2026-06-10\n\nSOURCES USED:\n- CoinGecko"
         }
         mock_client.return_value = (fake_client, "qwen3")
 

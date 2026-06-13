@@ -3,6 +3,7 @@ from typing import Any
 from src.data.market_data import MarketDataFetcher
 from src.data.tavily_search import TavilySearchService
 from src.logger import log
+from src.utils.performance import PerformanceTimer
 
 
 class ContextBuilder:
@@ -28,7 +29,10 @@ class ContextBuilder:
         sources: list[str] = ["CoinGecko simple price API"]
 
         for query in queries:
-            results = self.search_service.search(query=query, max_results=3)
+            timer = PerformanceTimer(f"Tavily query='{query}'", record_key="Tavily Total")
+            with timer:
+                results = self.search_service.search(query=query, max_results=3)
+            log.info("[PERF] Tavily query='%s' took %.2f sec", query, timer.duration)
             for result in results:
                 news_items.append({"query": query, **result})
                 sources.append(result.get("url") or f"Tavily search: {query}")

@@ -1,4 +1,7 @@
 import os
+import time
+from datetime import datetime
+from typing import Any
 
 from openai import APIConnectionError, APIStatusError, RateLimitError
 
@@ -6,6 +9,7 @@ from src.logger import log
 
 from src.ai.ollama_client import get_ollama_client
 from src.ai.openai_client import get_client
+from src.utils.performance import PerformanceMetrics, PerformanceTimer
 
 
 class ReportGenerator:
@@ -19,18 +23,22 @@ class ReportGenerator:
     def generate(prompt: str, market_context: str | dict):
         context_text = market_context["context"] if isinstance(market_context, dict) else market_context
         sources = market_context.get("sources", []) if isinstance(market_context, dict) else []
+        report_date = datetime.now().strftime("%Y-%m-%d")
 
         grounding_instructions = """
 YOU ARE GENERATING A FOLLOW THE MONEY REPORT.
 You MUST output every section exactly in this order and never omit sections.
 Analyze the supplied data. Do not summarize sources. Produce the report structure.
 Use only the supplied context.
-Do not invent facts, dates, statistics, or market prices.
+Never invent facts, statistics, dates, or market prices.
 If information is unavailable, write: "Data unavailable."
+Do not generate or infer a report date; use the supplied report date below.
 Every major claim must reference the supplied context.
 """
 
-        final_prompt = f"""
+        with PerformanceTimer("Prompt Construction", record_key="Prompt Construction"):
+            final_prompt = f"""
+REPORT DATE: {report_date}
 {grounding_instructions}
 
 === DATA START ===
@@ -43,6 +51,7 @@ REPORT FRAMEWORK:
 SOURCES USED:
 {chr(10).join(f'- {source}' for source in sources) if sources else '- Data unavailable.'}
 """
+        log.info("Prompt Length: %d chars", len(final_prompt))
 
         use_ollama = os.getenv("USE_OLLAMA", "1").lower() in {"1", "true", "yes"}
         log.info("Using Ollama backend: %s", use_ollama)
@@ -50,7 +59,8 @@ SOURCES USED:
 
         if use_ollama:
             log.info("Calling Ollama generation path")
-            return ReportGenerator._generate_with_ollama(final_prompt, sources, isinstance(market_context, dict))
+            with PerformanceTimer("Ollama Generation", record_key="Ollama Generation"):
+                return ReportGenerator._generate_with_ollama(final_prompt, sources, isinstance(market_context, dict), report_date)
 
         if os.getenv("USE_MOCK_OPENAI", "").lower() in {"1", "true", "yes"}:
             log.info("Using mock OpenAI mode")
@@ -79,9 +89,14 @@ SOURCES USED:
                 "Check your API key, model access, and billing details."
             ) from exc
 
-        if not ReportGenerator._validate_report_structure(content):
-            log.warning("Generated output missed required framework headers; retrying once.")
-            content = ReportGenerator._generate_with_openai(final_prompt + "\n\nRETRY: You must output the required framework sections exactly in order.", sources, isinstance(market_context, dict))
+        with PerformanceTimer("Validation", record_key="Validation"):
+            is_valid = ReportGenerator._validate_report_output(content, report_date, sources)
+
+        if not is_valid:
+                log.warning(
+                    "Validation failed. Returning generated report."
+                )
+
         if isinstance(market_context, dict):
             content = ReportGenerator._append_sources_section(content, sources)
         log.info("Model request finish; response length=%d", len(content))
@@ -112,24 +127,50 @@ SOURCES USED:
         return content
 
     @staticmethod
-    def _generate_with_ollama(final_prompt: str, sources: list[str], include_sources: bool):
+    def _generate_with_ollama(final_prompt: str, sources: list[str], include_sources: bool, report_date: str):
         try:
             client, model_name = get_ollama_client()
             log.info("Starting Ollama generation with model=%s", model_name)
-            response = client.generate(model=model_name, prompt=final_prompt, stream=False)
-            content = response.get("response") if isinstance(response, dict) else getattr(response, "response", None)
+            request_started_at = time.perf_counter()
+            response = client.generate(
+                                            model=model_name,
+                                            prompt=final_prompt,
+                                            stream=True,
+                                            options={
+                                                "num_predict": int(
+                                                    os.getenv(
+                                                        "MAX_GENERATION_TOKENS",
+                                                        "3500"
+                                                    )
+                                                ),
+                                                "temperature": 0.2,
+                                            },
+                                        )
+            content = ReportGenerator._collect_streamed_response(response, request_started_at)
 
             if not content:
                 raise RuntimeError("Ollama returned an empty response.")
 
-            if not ReportGenerator._validate_report_structure(content):
-                log.warning("Ollama output missed required framework headers; retrying once.")
-                retry_prompt = final_prompt + "\n\nRETRY: You must output the required framework sections exactly in order."
-                response = client.generate(model=model_name, prompt=retry_prompt, stream=False)
-                content = response.get("response") if isinstance(response, dict) else getattr(response, "response", None)
+            with PerformanceTimer("Validation", record_key="Validation"):
+                is_valid = ReportGenerator._validate_report_output(content, report_date, sources)
+
+            if not is_valid:
+                log.warning(
+                    "Validation failed. Returning generated report."
+                )
+
+            if not is_valid:
+                log.warning("Validation failed. Returning generated report.")
 
             if include_sources:
                 content = ReportGenerator._append_sources_section(content, sources)
+            generation_elapsed = time.perf_counter() - request_started_at
+            log.info("Response Length: %d chars", len(content))
+
+            estimated_tokens = len(content) // 4
+            log.info("Estimated Tokens: %d", estimated_tokens)
+
+            log.info("Generation Speed: %.2f chars/sec", len(content) / generation_elapsed if generation_elapsed > 0 else 0.0)
             log.info("Ollama request finish; response length=%d", len(content))
             return content
         except Exception as exc:
@@ -140,9 +181,108 @@ SOURCES USED:
             ) from exc
 
     @staticmethod
+    def _collect_streamed_response(
+        response: Any,
+        request_started_at: float
+    ) -> str:
+        MAX_REPORT_CHARS = int(
+            os.getenv("MAX_REPORT_CHARS", "25000")
+        )
+
+        chunks: list[str] = []
+        total_chars = 0
+        chunk_count = 0
+
+        if isinstance(response, dict):
+            text = response.get("response", "") or ""
+
+            if len(text) > MAX_REPORT_CHARS:
+                log.warning(
+                    "Response exceeded MAX_REPORT_CHARS=%d. Truncating.",
+                    MAX_REPORT_CHARS,
+                )
+                text = text[:MAX_REPORT_CHARS]
+
+            return text
+
+        try:
+            first_token_logged = False
+
+            for chunk in response:
+                chunk_count += 1
+
+                if isinstance(chunk, dict):
+                    text = chunk.get("response", "") or ""
+                else:
+                    text = str(chunk)
+
+                if not text:
+                    continue
+
+                if not first_token_logged:
+                    first_token_logged = True
+                    log.info(
+                        "[PERF] Ollama first token after %.2f sec",
+                        time.perf_counter() - request_started_at,
+                    )
+
+                total_chars += len(text)
+
+                if total_chars > MAX_REPORT_CHARS:
+                    remaining = (
+                        MAX_REPORT_CHARS
+                        - (total_chars - len(text))
+                    )
+
+                    if remaining > 0:
+                        chunks.append(text[:remaining])
+
+                    log.warning(
+                        "Maximum report size reached "
+                        "(MAX_REPORT_CHARS=%d). "
+                        "Stopping stream collection.",
+                        MAX_REPORT_CHARS,
+                    )
+                    break
+
+                chunks.append(text)
+
+            final_text = "".join(chunks)
+
+            log.info(
+                "[PERF] Stream collection complete | "
+                "chunks=%d | chars=%d",
+                chunk_count,
+                len(final_text),
+            )
+
+            return final_text
+
+        except TypeError:
+            log.warning(
+                "Unexpected Ollama response type: %s",
+                type(response).__name__,
+            )
+
+            text = str(response)
+
+            if len(text) > MAX_REPORT_CHARS:
+                text = text[:MAX_REPORT_CHARS]
+
+            return text
+
+    @staticmethod
     def _validate_report_structure(content: str) -> bool:
         normalized = "\n".join(line.strip() for line in content.splitlines())
         return all(header in normalized for header in ReportGenerator.REQUIRED_SECTION_HEADERS)
+
+    @staticmethod
+    def _validate_report_output(content: str, report_date: str, sources: list[str]) -> bool:
+        normalized = "\n".join(line.strip() for line in content.splitlines()).lower()
+        has_required_sections = ReportGenerator._validate_report_structure(content)
+        has_report_date = report_date in content or "date:" in normalized
+        has_sources_section = "sources used:" in normalized or not sources
+        return has_required_sections and has_report_date and has_sources_section
 
     @staticmethod
     def _append_sources_section(content: str, sources: list[str]) -> str:

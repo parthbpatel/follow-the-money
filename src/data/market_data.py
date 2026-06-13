@@ -1,6 +1,7 @@
 import requests
 
 from src.logger import log
+from src.utils.performance import PerformanceTimer
 
 
 class MarketDataFetcher:
@@ -15,8 +16,9 @@ class MarketDataFetcher:
         )
 
         log.info("Requesting crypto prices from %s", url)
-        response = requests.get(url)
-        response.raise_for_status()
+        with PerformanceTimer("CoinGecko", record_key="CoinGecko"):
+            response = requests.get(url)
+            response.raise_for_status()
         data = response.json()
         log.info("Received crypto prices: %s", data)
 
